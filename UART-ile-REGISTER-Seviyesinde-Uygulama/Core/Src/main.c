@@ -5,7 +5,7 @@
 
   UART Uzerinden, Klavyden 'A' Karakteri Girilirse Sarı LED Yanar
   'K' Karakteri Girilirse Sarı LED Soner 'B' Karakteri Girirse Baska Bir Karakter
-   Girilene Kadar Sarı LED Blink Yapar. Bunları Harici Bir Karakter Girilirse sari LED
+   Girilene Kadar Sarı LED Blink Yapar. Bu Karakterler Harici Bir Karakter Girilirse Sari LED
    Soner ve EROR LED'i Olan Kırmızı LED Yanar.
 
 
