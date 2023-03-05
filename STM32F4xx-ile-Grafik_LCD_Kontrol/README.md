@@ -1,3 +1,3 @@
-                      #####  KULLANMA KILAVUZU PDF DOSYASI EKLENMİŞTİR  ####
+                                   #####  KULLANMA KILAVUZU .PDF DOSYASI EKLENMİŞTİR  ####
 
 
