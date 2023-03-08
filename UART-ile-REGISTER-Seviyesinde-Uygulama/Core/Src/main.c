@@ -3,9 +3,9 @@
  	 	 	 	 	 	 ######	Bilal Habeş Akçam ######
  	 	 	   	   	   	   	   02.11.2022
 
-  UART Uzerinden, Klavyden 'A' Karakteri Girilirse Sarı LED Yanar
-  'K' Karakteri Girilirse Sarı LED Soner 'B' Karakteri Girirse Baska Bir Karakter
-   Girilene Kadar Sarı LED Blink Yapar. Bu Karakterler Harici Bir Karakter Girilirse Sari LED
+  UART Uzerinden, Klavyden 'A' Karakteri Girilirse Yesil LED Yanar
+  'K' Karakteri Girilirse Yesil LED Soner 'B' Karakteri Girirse Baska Bir Karakter
+   Girilene Kadar Yesil LED Blink Yapar. Bu Karakterler Harici Bir Karakter Girilirse Yesil LED
    Soner ve EROR LED'i Olan Kırmızı LED Yanar.
 
 
@@ -102,7 +102,7 @@ int main(void)
 
 	  myData = USART2->DR;
 
-	  // Klavye uzerinden gonderilen data A Olursa Eger Sari Led Yanar.
+	  // Klavye uzerinden gonderilen data A Olursa Eger Yesil Led Yanar.
 	  if(myData == 'A'){
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, SET);
 		HAL_Delay(50);
@@ -110,14 +110,14 @@ int main(void)
 
 	  }
 
-	  // Klavye uzerinden gonderilen data K Olursa Eger Sari Led Soner.
+	  // Klavye uzerinden gonderilen data K Olursa Eger Yesil Led Soner.
 	  else if(myData == 'K'){
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, RESET);
 		HAL_Delay(50);
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, RESET);
 	  }
 
-	  // Klavye uzerinden gonderilen data B Olursa Eger Sari Led Bask Bir Karakter Girilene Kadar Blink Yapar.
+	  // Klavye uzerinden gonderilen data B Olursa Eger Yesil Led Bask Bir Karakter Girilene Kadar Blink Yapar.
 	  else if(myData == 'B'){
 		  do{
 
@@ -130,7 +130,7 @@ int main(void)
 
 	  }
 
-	  // Klavye uzerinden gonderilen data A,K,B Harici Olursa Eger Sari Soner Kırmızı Hata Ledi Yanar.
+	  // Klavye uzerinden gonderilen data A,K,B Harici Olursa Eger Yesil Soner Kırmızı Hata Ledi Yanar.
 	  else{
 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, RESET);
 		  HAL_Delay(50);
