@@ -1,0 +1,8 @@
+"./Src/Accelerometer.o"
+"./Src/DisplayData.o"
+"./Src/Gyro.o"
+"./Src/StringUtilities.o"
+"./Src/main.o"
+"./Src/syscalls.o"
+"./Src/sysmem.o"
+"./Startup/startup_stm32.o"
