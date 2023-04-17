@@ -1,14 +1,15 @@
 /* USER CODE BEGIN Header */
 
 /*
- 	 	 	 	 ######	Bilal Habeş Akçam ######
- 	 	 	   	   	   	   02.11.2022
+ 	 	 	 	 ######	Bilal Habes Akcam ######
+ 	 	 	   	   	   02.11.2022
 
-  UART Uzerinden, Klavyden 'A' Karakteri Girilirse Yesil LED Yanar
-  'K' Karakteri Girilirse Yesil LED Soner 'B' Karakteri Girirse Baska Bir Karakter
-   Girilene Kadar Yesil LED Blink Yapar. Bunları Harici Bir Karakter Girilirse Yesil LED
-   Soner ve EROR LED'i Olan Kırmızı LED Yanar.
-
+LED states are determined according to the data entered by the user.
+  
+  -> If entered 'O', The Green LED is Lights Up.
+  -> If entered 'C', The Green LED is Lights Goes Out. 
+  -> If entered 'B', The Green LED is Blinks. 
+  -> if an external character is entered, the red led, which is the error led, will turn on.
 
 
   */
@@ -107,22 +108,19 @@ int main(void)
 
 
 
-	  // Klavye uzerinden gonderilen data A Olursa Eger Yesil Led Yanar.
-	  if(myData == 'A'){
+	  if(myData == 'O'){
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, SET);
 		HAL_Delay(50);
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, RESET);
 
 	  }
 
-	  // Klavye uzerinden gonderilen data K Olursa Eger Yesil Led Soner.
-	  else if(myData == 'K'){
+	  else if(myData == 'C'){
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, RESET);
 		HAL_Delay(50);
 		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, RESET);
 	  }
 
-	  // Klavye uzerinden gonderilen data B Olursa Eger Yesil Led Bask Bir Karakter Girilene Kadar Blink Yapar.
 	  else if(myData == 'B'){
 		  do{
 
@@ -135,7 +133,6 @@ int main(void)
 
 	  }
 
-	  // Klavye uzerinden gonderilen data A,K,B Harici Olursa Eger Yesil Soner Kırmızı Hata Ledi Yanar.
 	  else{
 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, RESET);
 		  HAL_Delay(50);
