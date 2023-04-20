@@ -17,11 +17,17 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "SpiderDriver.h"
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "SpiderDriver.h"
+#include "Accelerometer.h"
+#include "Gyro.h"
+#include "DisplayData.h"
+
+#define DELAY_LENGTH  100000
+
 
 /* USER CODE END Includes */
 
@@ -57,11 +63,28 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM5_Init(void);
 /* USER CODE BEGIN PFP */
+void InitializeGyro();
+void InitializeAccel();
+void Delay();
+
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+
+extern short accelX;
+int32_t angel2 = 0;
+extern int currentPosition[5][5];
+short totalData = 0;
+short filtredData;
+
+extern int a;
+extern int b;
+extern int c;
+extern int d;
+extern int e;
 
 /* USER CODE END 0 */
 
@@ -98,18 +121,20 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
-
   /* USER CODE BEGIN 2 */
 
   robot_tims_init();
   HAL_Delay(50);
 
   robot_all_leg_90();
-  HAL_Delay(1000);
+  HAL_Delay(500);
 
   initPosition();
-  HAL_Delay(1000);
+  HAL_Delay(500);
 
+  InitializeGyro();
+  InitializeAccel();
+// scalingServo();
 
   /* USER CODE END 2 */
 
@@ -121,7 +146,41 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  moveForward();
+//		moveForward();
+
+		for (int i = 0; i < 15; i++)
+		{
+			DisplayAxisValues();
+			totalData += accelX;
+		}
+
+		filtredData = totalData / 15;
+		totalData = 0;
+
+
+		if (filtredData >= 800)
+		{
+			angel2 = (filtredData / 60);
+			leg1_2(b + angel2);
+			leg1_1(b + angel2);
+			HAL_Delay(10);
+			leg3_2(d - angel2);
+			leg3_1(d - angel2);
+		}
+
+
+		else if (filtredData <= -800)
+		{
+
+			angel2 = (filtredData / 60);
+			leg2_2(b + angel2);
+			leg2_1(b + angel2);
+			HAL_Delay(10);
+			leg4_2(d - angel2);
+			leg4_1(d - angel2);
+
+		}
+
 
   }
   /* USER CODE END 3 */
@@ -219,7 +278,15 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -279,14 +346,6 @@ static void MX_TIM3_Init(void)
   sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
   {
     Error_Handler();
@@ -434,377 +493,20 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-//void initPosition(){
-//
-//int t=300;
-//
-//leg1_3(d);
-//HAL_Delay(t);
-//leg2_3(b);
-//HAL_Delay(t);
-//leg3_3(b);
-//HAL_Delay(t);
-//leg4_3(d);
-//HAL_Delay(t);
-//
-//leg1_2(b);
-//HAL_Delay(t);
-//leg2_2(d);
-//HAL_Delay(t);
-//leg3_2(d);
-//HAL_Delay(t);
-//leg4_2(b);
-//HAL_Delay(t);
-//
-//leg1_1(b);
-//HAL_Delay(t);
-//leg2_1(d);
-//HAL_Delay(t);
-//leg3_1(d);
-//HAL_Delay(t);
-//leg4_1(b);
-//HAL_Delay(t);
-//
-//
-//}
-//
-//void moveForward(){
-//	int delay=200;
-//	leg2_2(e);
-//	HAL_Delay(delay);
-//	leg2_3(a);
-//	leg2_1(c);
-//	HAL_Delay(delay);
-//	leg2_2(d);
-//	HAL_Delay(delay);
-//
-//
-//	leg1_3(c+20);//
-//	leg3_3(a-20);
-//	leg4_3(e);
-//	leg1_1(a);
-//	leg2_1(d);
-//	leg3_1(c);
-//	leg4_1(c+10);
-//	HAL_Delay(delay);
-//
-//
-//	leg3_2(e);
-//	HAL_Delay(delay);
-//	leg3_3(c-20);
-//	leg3_1(d);
-//	HAL_Delay(delay);
-//	leg3_2(d);
-//	HAL_Delay(delay);
-//
-//	/*    */
-//
-//
-//	leg1_2(a);
-//	HAL_Delay(delay);
-//	leg1_3(e+20);//
-//	leg1_1(b);
-//	HAL_Delay(delay);
-//	leg1_2(b);
-//	HAL_Delay(delay);
-//
-//
-//	leg1_3(d+20);
-//	leg2_3(b);
-//	leg3_3(b-20);
-//	leg4_2(c);
-//	leg1_1(b);//b
-//	leg4_1(d+10);
-//	HAL_Delay(delay);
-//
-//
-//	leg4_2(a);
-//	HAL_Delay(delay);
-//	leg4_3(d);
-//	leg4_1(b+10);
-//	HAL_Delay(delay);
-//	leg4_2(b);
-//	HAL_Delay(delay);
-//}
-//
-//void kademeliArttir(TIM_HandleTypeDef timer,unsigned int chanel, int bacak, int eklem, int angle, int fark){
-//	int i;
-//	int current = currentPosition[bacak][eklem];
-//
-//	if(current == angle){
-//		__HAL_TIM_SET_COMPARE(&timer, chanel, current);
-//		return;
-//	}
-//
-//	if(current < angle){
-//		for(i=current; i<=angle; i++){
-//			HAL_Delay(3);
-//			__HAL_TIM_SET_COMPARE(&timer, chanel, i);
-//		}
-//		currentPosition[bacak][eklem] = angle;
-//	}
-//	else{
-//		for(i=current; i>=angle; i--){
-//
-//			HAL_Delay(3);
-//			__HAL_TIM_SET_COMPARE(&timer, chanel, i);
-//		}
-//		currentPosition[bacak][eklem] = angle;
-//	}
-//
-//}
-//
-//
-//void leg4_1(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 45;
-//	kademeliArttir(htim5, TIM_CHANNEL_2, 4, 1, angle, 45);
-//
-//	//__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, angle);
-//
-//}
-//
-//void leg4_2(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 37;//37
-//	//kademeliArttir(htim3,TIM_CHANNEL_2, 4, 2, angle, 37);
-//	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, angle);
-//
-//}
-//
-//
-//void leg4_3(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 45;
-//	kademeliArttir(htim1, TIM_CHANNEL_1, 4, 3, angle, 45);
-//	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, angle);
-//
-//}
-//
-//
-//void leg2_1(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 45;
-//	kademeliArttir(htim1, TIM_CHANNEL_3, 2, 1, angle, 45);
-//	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, angle);
-//}
-//
-//
-//void leg2_2(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 47;
-//	kademeliArttir(htim5, TIM_CHANNEL_3, 2, 2, angle, 47);
-//	//__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, angle);
-//}
-//
-//
-//void leg2_3(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 32;
-//	kademeliArttir(htim5, TIM_CHANNEL_1, 2, 3, angle, 32);
-//	//__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, angle);
-//}
-//
-//
-//void leg3_1(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 45;
-//	kademeliArttir(htim4, TIM_CHANNEL_4, 3, 1, angle, 45);
-//	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, angle);
-//
-//}
-//
-//
-//void leg3_2(int angle){
-//
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 47;
-//	kademeliArttir(htim4, TIM_CHANNEL_2, 3, 2, angle, 47);
-//	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, angle);
-//
-//}
-//
-//
-////void leg3_3(int angle){
-////
-////	if(angle < 0)
-////		 angle = 0;
-////	if(angle >180)
-////		angle = 180;
-////	angle = angle + 37;//37
-////	kademeliArttir(htim3, TIM_CHANNEL_4, 3, 3, angle, 37);
-//////	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, angle);
-////}
-//
-//
-//
-//void leg3_3(int angle){
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 37;
-//	kademeliArttir(htim3, TIM_CHANNEL_4, 3, 3, angle, 37);
-//	//__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, angle);
-//}
-//
-//void leg1_1(int angle){
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 35;
-//	kademeliArttir(htim4, TIM_CHANNEL_1, 1, 1, angle, 35);
-//	//__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, angle);
-//}
-//
-//
-//void leg1_2(int angle){
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 48;
-//	kademeliArttir(htim3, TIM_CHANNEL_3, 1, 2, angle, 48);
-//	//__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, angle);
-//}
-//
-//
-//void leg1_3(int angle){
-//	if(angle < 0)
-//		 angle = 0;
-//	if(angle >180)
-//		angle = 180;
-//	angle = angle + 48;
-//	kademeliArttir(htim3, TIM_CHANNEL_1, 1, 3, angle, 48);
-//	//__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, angle);
-//}
-//
-//void robot_all_leg_90(void){
-//
-//	int i = 90;
-//
-//	  leg1_1(i);
-//	  HAL_Delay(500);
-//	  leg1_2(i);
-//	  HAL_Delay(500);
-//	  leg1_3(i);
-//	  HAL_Delay(1500);
-//
-//
-//	  leg2_1(i);
-//	  HAL_Delay(500);
-//	  leg2_2(i);
-//	  HAL_Delay(500);
-//	  leg2_3(i);
-//	  HAL_Delay(1500);
-//
-//	  leg3_1(i);
-//	  HAL_Delay(500);
-//	  leg3_2(i);
-//	  HAL_Delay(500);
-//	  leg3_3(i);
-//	  HAL_Delay(1500);
-//
-//	  leg4_1(i);
-//	  HAL_Delay(500);
-//	  leg4_2(i);
-//	  HAL_Delay(500);
-//	  leg4_3(i);
-//	  HAL_Delay(1500);
-//
-//}
-//
-//void robot_all_leg_init(void){
-//
-//	  leg1_1(115);
-//	  HAL_Delay(500);
-//	  leg1_2(120);
-//	  HAL_Delay(500);
-//	  leg1_3(140);
-//	  HAL_Delay(500);
-//
-//	  leg4_1(115);
-//	  HAL_Delay(500);
-//	  leg4_2(120);
-//	  HAL_Delay(500);
-//	  leg4_3(140);
-//	  HAL_Delay(500);
-//
-//
-//	  leg2_1(65);
-//	  HAL_Delay(500);
-//	  leg2_2(60);
-//	  HAL_Delay(500);
-//	  leg2_3(40);
-//	  HAL_Delay(500);
-//
-//	  leg3_1(65);
-//	  HAL_Delay(500);
-//	  leg3_2(60);
-//	  HAL_Delay(500);
-//	  leg3_3(40);
-//	  HAL_Delay(500);
-//
-//
-//}
-//
-//
-//
-//void robot_tims_init(void){
-//
-//
-//	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-//	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-//
-//	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-//	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-//	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-//	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-//
-//
-//	  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
-//	  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-//	  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
-//
-//	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
-//	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-//	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
-//
-//
-//}
+void InitializeGyro()
+{
+	GyroInit();
+}
 
+void InitializeAccel()
+{
+	AccelerometerInit();
+}
+
+void Delay()
+{
+	for(volatile int i = 0; i < DELAY_LENGTH; ++i);
+}
 
 /* USER CODE END 4 */
 

@@ -13,7 +13,7 @@
 #include "stm32f4xx_hal.h"
 
 #define forwardDelay	200
-#define initDelay		300
+#define initDelay		100
 
 
 void leg1_1(int angle);
@@ -31,6 +31,19 @@ void leg3_3(int angle);
 void leg4_1(int angle);
 void leg4_2(int angle);
 void leg4_3(int angle);
+
+
+
+
+void leg1_1_d(int angle);
+void leg1_2_d(int angle);
+
+void leg3_1_d(int angle);
+void leg3_2_d(int angle);
+
+
+void scalingServo(void);
+
 
 
 
