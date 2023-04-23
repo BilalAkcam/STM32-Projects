@@ -1,9 +1,3 @@
-/*
- * Gyro.h
- *
- *  Created on: Apr 8, 2023
- *      Author: ralpm
- */
 
 #ifndef INC_GYRO_H_
 #define INC_GYRO_H_
