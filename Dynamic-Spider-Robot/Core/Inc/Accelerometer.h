@@ -1,5 +1,3 @@
-
-
 #ifndef INC_ACCELEROMETER_H_
 #define INC_ACCELEROMETER_H_
 
