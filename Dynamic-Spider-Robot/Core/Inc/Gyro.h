@@ -1,4 +1,3 @@
-
 #ifndef INC_GYRO_H_
 #define INC_GYRO_H_
 
